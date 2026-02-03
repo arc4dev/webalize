@@ -11,6 +11,17 @@ Projekt jest gotowy do sprawdzenia zarówno w kodzie, jak i live na środowisku 
 - **Login:** `sroczyk.arkadiusz@gmail.com`
 - **Hasło:** `sroczykarkadiusz`
 
+Domyślny język to język polski, a drugi przykładowy język to angielski.
+
+Rzeczy do przetestowania:
+
+- /news
+- /news/[slug] (np. /news/)
+- /integrations
+- /faq
+- Formularz kontaktowy na stronie głównej (przycisk Umów wizytę)
+- Menu mobilne (multi-level)
+
 ---
 
 ## Co zostało zrobione (Kluczowe decyzje)
