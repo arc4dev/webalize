@@ -7,7 +7,6 @@ export async function getFAQByLocale(locale: Locale) {
   const payload = await getPayload({ config })
   const { isEnabled } = await draftMode()
 
-  // Fetch all categories (sorted by order)
   const { docs: categories } = await payload.find({
     collection: 'faq-categories',
     locale,
@@ -18,21 +17,18 @@ export async function getFAQByLocale(locale: Locale) {
     overrideAccess: false,
   })
 
-  // Build where query for FAQ items
   type WhereQuery = {
     _status?: { equals: string }
   }
 
   const whereQuery: WhereQuery = {}
 
-  // Only filter by status if not in draft mode
   if (!isEnabled) {
     whereQuery._status = {
       equals: 'published',
     }
   }
 
-  // Fetch all FAQ items
   const { docs: faqItems } = await payload.find({
     collection: 'faq',
     locale,

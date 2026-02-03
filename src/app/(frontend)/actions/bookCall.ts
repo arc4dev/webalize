@@ -13,17 +13,15 @@ type ServerActionResult = {
   id?: string
 }
 
-// Simple in-memory rate limiter
-// In production, consider using Redis or a dedicated rate limiting service
+// In-memory rate limiter (production: Redis/Upstash)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
-const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000 // 10 minutes
-const MAX_REQUESTS_PER_WINDOW = 3 // Max 3 submissions per 10 minutes per IP
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000
+const MAX_REQUESTS_PER_WINDOW = 3
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
   const record = rateLimitMap.get(ip)
 
-  // Clean up old entries periodically (simple garbage collection)
   if (rateLimitMap.size > 1000) {
     for (const [key, value] of rateLimitMap.entries()) {
       if (value.resetTime < now) {
@@ -33,7 +31,6 @@ function checkRateLimit(ip: string): boolean {
   }
 
   if (!record || record.resetTime < now) {
-    // No record or window expired - create new window
     rateLimitMap.set(ip, {
       count: 1,
       resetTime: now + RATE_LIMIT_WINDOW_MS,
@@ -42,11 +39,9 @@ function checkRateLimit(ip: string): boolean {
   }
 
   if (record.count >= MAX_REQUESTS_PER_WINDOW) {
-    // Rate limit exceeded
     return false
   }
 
-  // Increment count
   record.count++
   return true
 }
@@ -56,13 +51,11 @@ export async function submitBookCall(
   locale: string,
 ): Promise<ServerActionResult> {
   try {
-    // Get IP address for rate limiting
     const headersList = await headers()
     const forwardedFor = headersList.get('x-forwarded-for')
     const realIp = headersList.get('x-real-ip')
     const ip = forwardedFor?.split(',')[0] ?? realIp ?? 'unknown'
 
-    // Check rate limit
     if (!checkRateLimit(ip)) {
       const t = await getTranslations({ locale, namespace: 'bookCall' })
       return {
@@ -71,13 +64,9 @@ export async function submitBookCall(
       }
     }
 
-    // Get translations for validation messages
     const t = await getTranslations({ locale, namespace: 'bookCall' })
-
-    // Create schema with translated messages
     const schema = createBookCallFormSchema(t)
 
-    // Validate input
     const result = schema.safeParse(values)
 
     if (!result.success) {
@@ -95,12 +84,9 @@ export async function submitBookCall(
       }
     }
 
-    // Get Payload instance
     const payload = await getPayload({ config })
 
-    // Create form submission
-    // Using overrideAccess: true because this is a public form submission
-    // (intentional admin-style operation for anonymous users)
+    // Public form: overrideAccess required for anonymous submissions
     const submission = await payload.create({
       collection: 'form-submissions',
       data: {

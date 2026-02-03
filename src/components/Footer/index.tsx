@@ -10,32 +10,27 @@ type FooterProps = {
 export async function Footer({ locale }: FooterProps) {
   const payload = await getPayload({ config })
 
-  // Fetch navigation for footer and legal links
   const navigation = await payload.findGlobal({
     slug: 'navigation',
     locale,
     fallbackLocale: 'pl',
   })
 
-  // Fetch footer data (social, copyright)
   const footerData = await payload.findGlobal({
     slug: 'footer',
     locale,
     fallbackLocale: 'pl',
   })
 
-  // Fetch global contact info
   const globalSettings = await payload.findGlobal({
     slug: 'global',
     locale,
     fallbackLocale: 'pl',
   })
 
-  // Filter links by type
   const footerLinks = navigation.links.filter((link) => link.type?.includes('footer'))
   const legalLinks = navigation.links.filter((link) => link.type?.includes('legal'))
 
-  // Replace {year} placeholder with current year
   const currentYear = new Date().getFullYear()
   const copyrightText = footerData.copyrightText?.replace('{year}', currentYear.toString())
 

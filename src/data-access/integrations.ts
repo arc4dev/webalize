@@ -31,7 +31,6 @@ export async function getIntegrations({
 }: GetIntegrationsOptions) {
   const payload = await getPayload({ config })
 
-  // Build where query for integrations
   type WhereQuery = {
     category?: { equals: string | number }
     or?: Array<{ title?: { contains: string }; subtitle?: { contains: string } }>
@@ -39,9 +38,7 @@ export async function getIntegrations({
 
   const whereQuery: WhereQuery = {}
 
-  // Add category filter if specified
   if (categorySlug && categorySlug !== 'all') {
-    // Fetch categories to find by slug
     const categories = await getIntegrationsCategories(locale)
     const category = categories.find((cat) => cat.slug === categorySlug)
     if (category) {
@@ -51,7 +48,6 @@ export async function getIntegrations({
     }
   }
 
-  // Add search filter if specified
   if (searchQuery && searchQuery.trim() !== '') {
     whereQuery.or = [
       {
@@ -67,7 +63,6 @@ export async function getIntegrations({
     ]
   }
 
-  // Fetch integrations
   const { docs: integrations } = await payload.find({
     collection: 'integrations',
     locale,

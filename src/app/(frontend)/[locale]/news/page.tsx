@@ -20,14 +20,11 @@ export default async function NewsPage({ params, searchParams }: Props) {
 
   const t = await getTranslations({ locale, namespace: 'news' })
 
-  // Parse page number
   const currentPage = pageParam ? parseInt(pageParam, 10) : 1
   const validPage = currentPage > 0 ? currentPage : 1
 
-  // Fetch all categories (sorted by order) using cached function
   const categories = await getNewsCategories(locale)
 
-  // Fetch news posts with pagination using cached function
   const {
     docs: newsPosts,
     totalPages,

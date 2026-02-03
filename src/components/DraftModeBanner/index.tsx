@@ -2,17 +2,11 @@
 
 import { useRouter } from 'next/navigation'
 
-/**
- * Draft mode banner component
- * Shows when user is in preview/draft mode with option to exit
- */
 export function DraftModeBanner() {
   const router = useRouter()
 
   const exitPreview = async () => {
-    // Call exit-preview endpoint
     await fetch('/api/exit-preview')
-    // Refresh the page to show published content
     router.refresh()
   }
 

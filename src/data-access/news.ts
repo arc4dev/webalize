@@ -22,14 +22,10 @@ type GetNewsBySlugParams = {
   skipDraftMode?: boolean
 }
 
-/**
- * Cached function to fetch news posts with filtering and pagination
- */
 const getCachedNewsInternal = unstable_cache(
   async ({ locale, categorySlug, page = 1, limit = POSTS_PER_PAGE }: GetNewsParams) => {
     const payload = await getPayload({ config })
 
-    // Fetch categories first if needed
     let categoryId: string | number | undefined
     if (categorySlug && categorySlug !== 'all') {
       const { docs: categories } = await payload.find({

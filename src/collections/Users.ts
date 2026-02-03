@@ -18,9 +18,8 @@ export const Users: CollectionConfig = {
       ],
       defaultValue: ['user'],
       required: true,
-      saveToJWT: true, // Include in JWT for fast access checks
+      saveToJWT: true,
       access: {
-        // Only admins can modify roles
         update: ({ req: { user } }) => {
           if (!user) return false
           if (user.roles && Array.isArray(user.roles)) {
@@ -30,7 +29,5 @@ export const Users: CollectionConfig = {
         },
       },
     },
-    // Email added by default
-    // Add more fields as needed
   ],
 }
