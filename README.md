@@ -6,8 +6,8 @@ Projekt jest gotowy do sprawdzenia zarówno w kodzie, jak i live na środowisku 
 
 ### Podgląd Live
 
-- **Strona:** [LINK_DO_VERCELA] (np. https://twoj-projekt.vercel.app)
-- **Panel Admina:** [LINK_DO_VERCELA]/admin
+- **Strona:** https://webalize-git-main-arc4devs-projects.vercel.app/
+- **Panel Admina:** https://webalize-git-main-arc4devs-projects.vercel.app/admin
 - **Login:** `sroczyk.arkadiusz@gmail.com`
 - **Hasło:** `sroczykarkadiusz`
 
