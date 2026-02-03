@@ -1,0 +1,62 @@
+{
+  "news": {
+    "title": "Aktualności",
+    "readMore": "Czytaj więcej",
+    "relatedNews": "Powiązane aktualności",
+    "allCategories": "Wszystkie",
+    "categories": "Kategorie",
+    "noResults": "Brak wyników",
+    "pagination": {
+      "previous": "Poprzednia",
+      "next": "Następna",
+      "page": "Strona {page} z {total}"
+    }
+  },
+  "faq": {
+    "title": "Najczęściej zadawane pytania",
+    "subtitle": "Znajdź odpowiedzi na najczęstsze pytania",
+    "allCategories": "Wszystkie",
+    "categories": "Kategorie",
+    "noResults": "Brak pytań"
+  },
+  "integrations": {
+    "title": "Integracje",
+    "subtitle": "Połącz się z ulubionymi narzędziami",
+    "allCategories": "Wszystkie",
+    "categories": "Kategorie",
+    "category": "Kategoria",
+    "noResults": "Brak integracji",
+    "search": {
+      "label": "Szukaj integracji",
+      "placeholder": "Szukaj po nazwie lub opisie...",
+      "button": "Szukaj"
+    }
+  },
+  "language": {
+    "select": "Wybierz język",
+    "pl": "Polski",
+    "en": "English"
+  },
+  "bookCall": {
+    "buttonLabel": "Umów rozmowę",
+    "modalTitle": "Umów rozmowę",
+    "fullName": "Imię i nazwisko",
+    "email": "Email",
+    "companyName": "Nazwa firmy",
+    "phone": "Numer telefonu",
+    "countryCode": "Kod kraju",
+    "phonePlaceholder": "123 456 789",
+    "preferredDate": "Preferowana data",
+    "privacyConsent": "Akceptuję politykę prywatności",
+    "submit": "Umów rozmowę",
+    "submitting": "Wysyłanie...",
+    "successMessage": "Dziękujemy! Wkrótce się z Tobą skontaktujemy.",
+    "errors": {
+      "fullNameRequired": "Imię i nazwisko jest wymagane",
+      "emailInvalid": "Proszę podać poprawny adres email",
+      "privacyRequired": "Musisz zaakceptować politykę prywatności",
+      "rateLimitExceeded": "Zbyt wiele prób. Spróbuj ponownie później.",
+      "generic": "Coś poszło nie tak. Spróbuj ponownie."
+    }
+  }
+}

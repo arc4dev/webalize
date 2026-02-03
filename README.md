@@ -1,67 +1,48 @@
-# Payload Blank Template
+# Next.js 15 & PayloadCMS 3.0 - ZADANIE REKRUTACYJNE
 
-This template comes configured with the bare minimum to get started on anything you need.
+## Quick Start
 
-## Quick start
+Projekt jest gotowy do sprawdzenia zarówno w kodzie, jak i live na środowisku produkcyjnym (Vercel + Neon DB).
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+### Podgląd Live
 
-## Quick Start - local setup
+- **Strona:** [LINK_DO_VERCELA] (np. https://twoj-projekt.vercel.app)
+- **Panel Admina:** [LINK_DO_VERCELA]/admin
+- **Login:** `sroczyk.arkadiusz@gmail.com`
+- **Hasło:** `sroczykarkadiusz`
 
-To spin up this template locally, follow these steps:
+---
 
-### Clone
+## Co zostało zrobione (Kluczowe decyzje)
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+- **Next.js 15 & Payload 3.0** - Świadomie wybrałem wersję 15 ze względu na pełną stabilność z Payloadem. Pominąłem wersję 16 (mimo że ma już nowe Cache Components), bo na tym etapie generowała konflikty z bibliotekami. Docelowo warto to zmigrować, ale w zadaniu nie chciałem tracić czasu na walkę z niestabilnym ekosystemem...
+- **Warstwa danych (DAL)** - Cała logika wyciągania danych z Payloada jest zamknięta w osobnych funkcjach (Data Access Layer). Dzięki temu komponenty są czyste, a my mamy jedno scentralizowane miejsce do zarządzania zapytaniami.
+- **Cachowanie (On-demand ISR)** - Użyłem `unstable_cache` i tagów. Wszystko odświeża się automatycznie dzięki hookom `afterChange` w Payloadzie. Zmiany w panelu są widoczne od razu, przy jednoczesnym zachowaniu szybkości statycznej strony.
+- **Next.js 15 patterns** - Dopilnowałem, żeby `params` i `searchParams` były obsługiwane jako Promise. To wazna zmiana w wersji 15, bez której aplikacja rzucałaby błędy w runtime.
+- **Bezpieczeństwo akcji** - Formularz kontaktowy posiada walidację Zod po stronie serwera oraz prosty rate limiter (oparty o IP w pamięci), co chroni projekt przed podstawowym spamem i botami.
+- **SEO & Metadata** - Zaimplementowałem dynamiczne `generateMetadata`, dzięki czemu każda strona (newsy, kategorie) posiada unikalne tagi SEO pobierane bezpośrednio z CMS.
+- **Podgląd (Draft Mode)** - Zrobiłem działający mechanizm draftów zintegrowany z Next.js. Edytor może podejrzeć posty przed ich oficjalną publikacją.
+- **i18n** - Użyłem `next-intl` do międzynarodizacji. Wszystkie teksty są w plikach JSON, a zapytania do Payloada uwzględniają aktualny `locale`, co pozwala na łatwe skalowanie o kolejne języki.
+- **Tooling** - Projekt ma włączone rygorystyczne typowanie (`strict: true`) oraz skonfigurowany ESLint/Prettier, co zapewnia czystość kodu od samego początku.
 
-### Development
+## 🛠️ Świadome uproszczenia (Możliwości rozwoju)
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+Poniższe rzeczy pominąłem celowo, skupiając się na architekturze serwerowej w wyznaczonym czasie:
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+- **Dynamiczne strony w CMS** - Obecnie strony są w kodzie dla lepszego typowania. W pełnej wersji dodałbym kolekcję `Pages` (Page Builder), aby klient mógł sam budować podstrony z klocków (Lexical blocks).
+- **Live Preview** - Mamy solidny fundament pod Draft Mode. Pełne wizualne Live Preview (okno w oknie w panelu admina) to świetny dodatek "nice-to-have" dla wygody klienta w przyszłości oczywiście.
+- **Role i uprawnienia** - Jest prosty podział Admin/User. Przy większym projekcie wdrożyłbym pełne RBAC (field-level access) dla edytorów i autorów.
+- **Media Storage** - Zdjęcia są obecnie uploadowane bezpośrednio do Payloada. Docelowo sugeruję zewnętrzny storage (S3/Cloudinary/Vercel Blob) dla lepszej wydajności.
+- **Skalowalny limiter** - In-memory limiter wystarcza na start, ale na produkcji (Vercel) przeszedłbym na Redis/Upstash, aby limity były spójne między instancjami serwera.
+- **Integracje Formularzy** - Brak wysyłki maili (np. Resend/SendGrid). Obecnie zgłoszenia trafiają tylko do bazy w CMS, ale wystarczy dopiąć providera w Server Action i tyle.
+- **Spam Protection** - Oprócz rate limitu, w przyszłości warto dodać Honeypot lub Cloudflare Turnstile dla pełnej ochrony formularzy.
+- **Testy** - Jest gotowy setup pod Vitest i Playwright z przykładowymi testami.
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+## 📦 Główne paczki
 
-#### Docker (Optional)
-
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
-
-To do so, follow these steps:
-
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
-
-## How it works
-
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
-
-### Collections
-
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
-
-- #### Users (Authentication)
-
-  Users are auth-enabled collections that have access to the admin panel.
-
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+- **Framework:** Next.js 15 (App Router)
+- **CMS:** PayloadCMS 3.0 (Local API)
+- **Database:** PostgreSQL (Neon)
+- **i18n:** next-intl
+- **Validation:** Zod
+- **Testing:** Vitest, Playwright

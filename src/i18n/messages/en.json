@@ -1,0 +1,62 @@
+{
+  "news": {
+    "title": "News",
+    "readMore": "Read more",
+    "relatedNews": "Related News",
+    "allCategories": "All",
+    "categories": "Categories",
+    "noResults": "No results found",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page} of {total}"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions",
+    "allCategories": "All",
+    "categories": "Categories",
+    "noResults": "No questions found"
+  },
+  "integrations": {
+    "title": "Integrations",
+    "subtitle": "Connect with your favorite tools",
+    "allCategories": "All",
+    "categories": "Categories",
+    "category": "Category",
+    "noResults": "No integrations found",
+    "search": {
+      "label": "Search integrations",
+      "placeholder": "Search by name or description...",
+      "button": "Search"
+    }
+  },
+  "language": {
+    "select": "Choose language",
+    "pl": "Polski",
+    "en": "English"
+  },
+  "bookCall": {
+    "buttonLabel": "Book a Call",
+    "modalTitle": "Book a Call",
+    "fullName": "Full Name",
+    "email": "Email",
+    "companyName": "Company Name",
+    "phone": "Phone Number",
+    "countryCode": "Country Code",
+    "phonePlaceholder": "123 456 789",
+    "preferredDate": "Preferred Date",
+    "privacyConsent": "I accept the privacy policy",
+    "submit": "Book a Call",
+    "submitting": "Submitting...",
+    "successMessage": "Thank you! We'll contact you soon.",
+    "errors": {
+      "fullNameRequired": "Full name is required",
+      "emailInvalid": "Please enter a valid email address",
+      "privacyRequired": "You must accept the privacy policy",
+      "rateLimitExceeded": "Too many requests. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    }
+  }
+}

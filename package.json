@@ -18,18 +18,23 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@payloadcms/db-vercel-postgres": "3.74.0",
     "@payloadcms/next": "3.74.0",
+    "@payloadcms/plugin-seo": "^3.74.0",
     "@payloadcms/richtext-lexical": "3.74.0",
     "@payloadcms/ui": "3.74.0",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
     "next": "15.4.11",
+    "next-intl": "^4.8.2",
     "payload": "3.74.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "react-hook-form": "^7.71.1",
     "sharp": "0.34.2",
-    "@payloadcms/db-vercel-postgres": "3.74.0"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1",

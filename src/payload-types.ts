@@ -69,27 +69,55 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    news: News;
+    'news-categories': NewsCategory;
+    faq: Faq;
+    'faq-categories': FaqCategory;
+    integrations: Integration;
+    'integration-categories': IntegrationCategory;
+    'form-submissions': FormSubmission;
     'payload-kv': PayloadKv;
+    'payload-folders': FolderInterface;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    'payload-folders': {
+      documentsAndFolders: 'payload-folders' | 'media';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    news: NewsSelect<false> | NewsSelect<true>;
+    'news-categories': NewsCategoriesSelect<false> | NewsCategoriesSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
+    'faq-categories': FaqCategoriesSelect<false> | FaqCategoriesSelect<true>;
+    integrations: IntegrationsSelect<false> | IntegrationsSelect<true>;
+    'integration-categories': IntegrationCategoriesSelect<false> | IntegrationCategoriesSelect<true>;
+    'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
-  fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
-  locale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('pl' | 'en') | ('pl' | 'en')[];
+  globals: {
+    navigation: Navigation;
+    footer: Footer;
+    global: Global;
+  };
+  globalsSelect: {
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+    global: GlobalSelect<false> | GlobalSelect<true>;
+  };
+  locale: 'pl' | 'en';
   user: User & {
     collection: 'users';
   };
@@ -121,7 +149,8 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
+  roles: ('admin' | 'user')[];
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -145,8 +174,12 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
+  /**
+   * Alternative text for the media item (for accessibility)
+   */
   alt: string;
+  folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -158,13 +191,312 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    square?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    xlarge?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-folders".
+ */
+export interface FolderInterface {
+  id: number;
+  name: string;
+  folder?: (number | null) | FolderInterface;
+  documentsAndFolders?: {
+    docs?: (
+      | {
+          relationTo?: 'payload-folders';
+          value: number | FolderInterface;
+        }
+      | {
+          relationTo?: 'media';
+          value: number | Media;
+        }
+    )[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  folderType?: 'media'[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news".
+ */
+export interface News {
+  id: number;
+  /**
+   * News post title
+   */
+  title: string;
+  /**
+   * Main image for the news article (1920x1080px recommended). All necessary image sizes (thumbnails, cards, social media) will be automatically generated from this image.
+   */
+  heroImage: number | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Short summary (max 200 chars, for cards)
+   */
+  excerpt: string;
+  category: number | NewsCategory;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  slugLock?: boolean | null;
+  authors?: (number | User)[] | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news-categories".
+ */
+export interface NewsCategory {
+  id: number;
+  /**
+   * Unique identifier (e.g., "technology", "business") - not translated
+   */
+  slug: string;
+  /**
+   * Category title - translated per language
+   */
+  title: string;
+  /**
+   * Display order (lower numbers first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  /**
+   * The question
+   */
+  question: string;
+  /**
+   * The answer to the question
+   */
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * FAQ category
+   */
+  category: number | FaqCategory;
+  /**
+   * Display order within category (lower numbers appear first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-categories".
+ */
+export interface FaqCategory {
+  id: number;
+  /**
+   * Category name
+   */
+  title: string;
+  /**
+   * Short description of the category
+   */
+  subtitle?: string | null;
+  /**
+   * URL-friendly identifier
+   */
+  slug: string;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integrations".
+ */
+export interface Integration {
+  id: number;
+  /**
+   * Small integration logo or icon
+   */
+  image: number | Media;
+  title: string;
+  /**
+   * Short description of the integration
+   */
+  subtitle: string;
+  category: number | IntegrationCategory;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integration-categories".
+ */
+export interface IntegrationCategory {
+  id: number;
+  title: string;
+  slug: string;
+  /**
+   * Order in which categories are displayed (lower numbers first)
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions".
+ */
+export interface FormSubmission {
+  id: number;
+  /**
+   * Type of form submission
+   */
+  type: 'book-call' | 'contact' | 'newsletter';
+  /**
+   * Full name of the person submitting
+   */
+  fullName: string;
+  /**
+   * Email address
+   */
+  email: string;
+  /**
+   * Company name (optional)
+   */
+  companyName?: string | null;
+  /**
+   * Country code (e.g., +48, +1)
+   */
+  phoneCountryCode?: string | null;
+  /**
+   * Phone number without country code
+   */
+  phoneNumber?: string | null;
+  /**
+   * Preferred date for call/meeting
+   */
+  preferredDate?: string | null;
+  /**
+   * User accepted privacy policy
+   */
+  privacyConsent: boolean;
+  /**
+   * Status of the submission
+   */
+  status: 'new' | 'contacted' | 'closed';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -181,20 +513,52 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'news';
+        value: number | News;
+      } | null)
+    | ({
+        relationTo: 'news-categories';
+        value: number | NewsCategory;
+      } | null)
+    | ({
+        relationTo: 'faq';
+        value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'faq-categories';
+        value: number | FaqCategory;
+      } | null)
+    | ({
+        relationTo: 'integrations';
+        value: number | Integration;
+      } | null)
+    | ({
+        relationTo: 'integration-categories';
+        value: number | IntegrationCategory;
+      } | null)
+    | ({
+        relationTo: 'form-submissions';
+        value: number | FormSubmission;
+      } | null)
+    | ({
+        relationTo: 'payload-folders';
+        value: number | FolderInterface;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -204,10 +568,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -227,7 +591,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -238,6 +602,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  roles?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -261,6 +626,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  folder?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -272,6 +638,181 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        square?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        small?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        medium?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        xlarge?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news_select".
+ */
+export interface NewsSelect<T extends boolean = true> {
+  title?: T;
+  heroImage?: T;
+  content?: T;
+  excerpt?: T;
+  category?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  slugLock?: T;
+  authors?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news-categories_select".
+ */
+export interface NewsCategoriesSelect<T extends boolean = true> {
+  slug?: T;
+  title?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-categories_select".
+ */
+export interface FaqCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  slug?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integrations_select".
+ */
+export interface IntegrationsSelect<T extends boolean = true> {
+  image?: T;
+  title?: T;
+  subtitle?: T;
+  category?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integration-categories_select".
+ */
+export interface IntegrationCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions_select".
+ */
+export interface FormSubmissionsSelect<T extends boolean = true> {
+  type?: T;
+  fullName?: T;
+  email?: T;
+  companyName?: T;
+  phoneCountryCode?: T;
+  phoneNumber?: T;
+  preferredDate?: T;
+  privacyConsent?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -280,6 +821,18 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-folders_select".
+ */
+export interface PayloadFoldersSelect<T extends boolean = true> {
+  name?: T;
+  folder?: T;
+  documentsAndFolders?: T;
+  folderType?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -312,6 +865,161 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  links: {
+    /**
+     * Where this link appears (can select multiple)
+     */
+    type: ('header' | 'footer' | 'legal')[];
+    /**
+     * Link text
+     */
+    label: string;
+    /**
+     * URL path (e.g., "/news", "/about")
+     */
+    href: string;
+    /**
+     * Dropdown menu items (optional, for 2-level navigation)
+     */
+    children?:
+      | {
+          label: string;
+          href: string;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  /**
+   * Social media links (LinkedIn, Twitter, GitHub, etc.)
+   */
+  socialLinks?:
+    | {
+        /**
+         * Platform name (e.g., LinkedIn, Twitter, GitHub)
+         */
+        platform: string;
+        /**
+         * Full URL to social profile
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Copyright text. Use {year} placeholder for dynamic year.
+   */
+  copyrightText: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "global".
+ */
+export interface Global {
+  id: number;
+  contactInfo: {
+    /**
+     * Contact email
+     */
+    email: string;
+    /**
+     * Contact phone
+     */
+    phone: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  links?:
+    | T
+    | {
+        type?: T;
+        label?: T;
+        href?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  copyrightText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "global_select".
+ */
+export interface GlobalSelect<T extends boolean = true> {
+  contactInfo?:
+    | T
+    | {
+        email?: T;
+        phone?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "QuoteBannerBlock".
+ */
+export interface QuoteBannerBlock {
+  /**
+   * The quote text
+   */
+  quote: string;
+  /**
+   * The author of the quote
+   */
+  author: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'quoteBanner';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
